@@ -1,0 +1,1222 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Leesvriend</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@400;500;600;700&family=Baloo+Bhaijaan+2:wght@400;600;700&display=swap">
+<style>
+/* Layout: one narrow storybook column. Story pages are white "paper" on a soft sky; every button is chunky and pressable like a toy key.
+   Colours come from a Dutch street: bicycle orange (actions), canal teal (correct), sunflower yellow (the word to read), tulip red (try again). */
+:root{
+  --bg:#EAF0FF; --surface:#FFFFFF; --ink:#1E2A5A; --muted:#5E6893; --line:#D8E0F6; --soft:#FFF3C4;
+  --orange:#FF7A1A; --teal:#0E9485; --teal-soft:#D6F3EE; --sun:#FFD23F; --sun-ink:#1E2A5A;
+  --rose:#D93A44; --rose-soft:#FDE3E4; --amber:#A65F00; --amber-soft:#FFEFD3;
+  --ok:var(--teal); --almost:var(--amber); --bad:var(--rose); --help:#B8336E; --mark:var(--sun); --mark-ink:var(--sun-ink); --accent:var(--orange);
+  --f-read:"Andika","Comic Sans MS",system-ui,sans-serif;
+  --f-ui:"Fredoka","Baloo Bhaijaan 2","Arial Rounded MT Bold",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12173A; --surface:#1C2350; --ink:#EEF1FF; --muted:#A3ACD6; --line:#2E3878; --soft:#3A3420;
+  --orange:#FF8A3D; --teal:#3FD8C6; --teal-soft:#123F45; --rose:#FF6B70; --rose-soft:#4A1F33; --amber:#FFB547; --amber-soft:#43341A; --help:#F27DB1; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12173A; --surface:#1C2350; --ink:#EEF1FF; --muted:#A3ACD6; --line:#2E3878; --soft:#3A3420;
+  --orange:#FF8A3D; --teal:#3FD8C6; --teal-soft:#123F45; --rose:#FF6B70; --rose-soft:#4A1F33; --amber:#FFB547; --amber-soft:#43341A; --help:#F27DB1; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+section{display:flex;flex-direction:column;gap:16px}
+h1,h2{margin:0;text-wrap:balance;font-weight:600}
+h1{font-size:28px;line-height:1.2}
+h2{font-size:20px;line-height:1.3}
+p{margin:0}
+.muted{color:var(--muted)}
+.note{font-size:14px;color:var(--muted)}
+.center{text-align:center;justify-content:center}
+.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+[dir="rtl"] .flip{transform:scaleX(-1)}
+
+/* buttons: chunky keys with a solid under-edge */
+button,input{font-family:var(--f-ui);font-size:17px}
+button{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;min-height:48px;padding:10px 18px;
+  border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;
+  box-shadow:0 4px 0 var(--line);transition:transform .08s,box-shadow .08s}
+button:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.primary{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--orange) 55%,#000)}
+.primary:active:not(:disabled){box-shadow:0 1px 0 color-mix(in srgb,var(--orange) 55%,#000)}
+.soft{background:var(--bg)}
+.iconbtn{background:none;border:0;box-shadow:none;min-height:40px;padding:6px 2px;color:var(--muted)}
+.iconbtn:active:not(:disabled){box-shadow:none}
+.big{min-height:58px;font-size:19px;width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--orange);display:grid;place-items:center;color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--orange) 55%,#000)}
+.logo .ic{width:26px;height:26px}
+.brand b{display:block;font-family:var(--f-read);font-size:26px;line-height:1.1}
+.brand small{display:block;font-size:13px;color:var(--muted)}
+.mode{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px}
+.mode::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+
+/* home */
+.langs{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.langs>span{font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--surface);border:2px solid var(--line)}
+.seg button{min-height:38px;padding:4px 16px;border:0;border-radius:999px;box-shadow:none;background:none;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.story-btn{flex-direction:column;align-items:stretch;padding:0;overflow:hidden;border-radius:22px;text-align:start;gap:0;min-height:0}
+.cover{display:block;width:100%;height:auto}
+.sb{display:flex;flex-direction:column;gap:6px;padding:12px 16px 14px}
+.story-btn .t{font-family:var(--f-read);font-size:22px;font-weight:700;line-height:1.2}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.level{font-size:13px;font-weight:600;color:var(--muted);background:var(--bg);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.stars{font-size:20px;letter-spacing:2px;color:var(--line)}
+.stars .on{color:var(--sun)}
+details.panel{gap:0}
+details.panel[open]{gap:14px}
+summary{cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--muted);list-style:none}
+summary::-webkit-details-marker{display:none}
+
+/* panels */
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 0 var(--line)}
+.ph{display:flex;align-items:center;gap:10px}
+.ph .badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--bg);color:var(--orange)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+/* reading page */
+.page{background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:18px 20px 22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 0 var(--line)}
+.page h2{font-family:var(--f-read);font-size:22px;font-weight:700}
+.prog{height:10px;border-radius:99px;background:var(--bg);overflow:hidden;direction:ltr}
+.prog span{display:block;height:100%;width:0;background:var(--teal);border-radius:inherit;transition:width .3s ease}
+.text{font-family:var(--f-read);font-size:clamp(26px,7vw,34px);line-height:1.85;word-spacing:.12em;text-align:left}
+.w{border-radius:10px;padding:0 5px;margin:0 -2px;cursor:pointer;transition:background .15s,color .15s}
+.w.sent{background:var(--soft)}
+.w.cur{background:var(--sun);color:var(--sun-ink);box-shadow:0 3px 0 color-mix(in srgb,var(--sun) 55%,#000)}
+.w.ok{color:var(--teal)}
+.w.almost{color:var(--amber)}
+.w.bad{color:var(--rose);font-weight:700}
+.w.missed{text-decoration:underline wavy var(--rose);text-underline-offset:7px}
+.w.helped{color:var(--help)}
+.w.cur.stuck{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px var(--sun)}}
+.status{font-size:16px;min-height:1.5em;text-align:center}
+.heard{font-size:15px;color:var(--muted);text-align:center;font-family:var(--f-read)}
+.listening{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--rose);margin-inline-end:8px;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);justify-content:center}
+
+/* the big round microphone */
+.orbrow{display:flex;flex-direction:column;align-items:center;gap:12px}
+.orb{--lvl:0;flex-direction:column;gap:8px;background:none;border:0;box-shadow:none;padding:4px;min-height:0;color:var(--ink);font-size:16px}
+.orb:active:not(:disabled){transform:none;box-shadow:none}
+.orb-c{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#fff;
+  box-shadow:0 5px 0 color-mix(in srgb,var(--orange) 55%,#000),0 0 0 calc(var(--lvl) * 18px) color-mix(in srgb,var(--orange) 25%,transparent);
+  transition:box-shadow .08s linear,background .2s,transform .08s}
+.orb-c .ic{width:38px;height:38px}
+.orb:active:not(:disabled) .orb-c{transform:translateY(3px)}
+.orb[aria-pressed="true"] .orb-c{background:var(--rose);
+  box-shadow:0 5px 0 color-mix(in srgb,var(--rose) 55%,#000),0 0 0 calc(6px + var(--lvl) * 18px) color-mix(in srgb,var(--rose) 25%,transparent)}
+@media (prefers-reduced-motion:reduce){.w.cur.stuck,.listening{animation:none}.orb-c,.prog span{transition:none}}
+
+/* home-language part */
+.home-text{font-size:19px;line-height:1.8}
+.opts{display:grid;gap:10px}
+.opts button{justify-content:flex-start;text-align:start;min-height:56px;font-size:18px}
+.opts button.right{border-color:var(--teal);background:var(--teal-soft);color:var(--teal);box-shadow:0 4px 0 var(--teal)}
+.opts button.wrong{border-color:var(--rose);background:var(--rose-soft);color:var(--rose);box-shadow:0 4px 0 var(--rose)}
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.vocab button{justify-content:space-between;min-height:56px}
+.vocab .nl{font-family:var(--f-read);font-size:21px;font-weight:700}
+.vocab .tr{color:var(--muted);font-weight:500}
+.vocab .ic{color:var(--orange)}
+
+/* end screen */
+.score{align-items:center;text-align:center;gap:8px}
+.starrow{display:flex;gap:8px;justify-content:center}
+.starrow svg{width:62px;height:62px;display:block}
+.starrow .on path{fill:var(--sun);stroke:color-mix(in srgb,var(--sun) 55%,#000)}
+.starrow .off path{fill:var(--bg);stroke:var(--line)}
+.points{display:flex;align-items:baseline;gap:8px;justify-content:center;font-variant-numeric:tabular-nums}
+.points b{font-family:var(--f-read);font-size:72px;line-height:1}
+.points>span{color:var(--muted);font-size:18px}
+#recText{font-family:var(--f-read);font-size:21px;line-height:1.9;text-align:left}
+.rs{border-radius:10px;padding:2px 4px;cursor:pointer}
+.rs.cur{background:var(--soft)}
+.rs.good:not(.cur){color:var(--teal)}
+.cw.ok{color:var(--teal);font-weight:700}
+.cw.bad{color:var(--rose);font-weight:700;text-decoration:underline wavy var(--rose);text-underline-offset:5px}
+.verdict{font-size:18px;font-weight:600;padding:12px 16px;border-radius:16px;text-align:center}
+.verdict.good{color:var(--teal);background:var(--teal-soft)}
+.verdict.almost{color:var(--amber);background:var(--amber-soft)}
+.verdict.bad,.verdict.none{color:var(--rose);background:var(--rose-soft)}
+.sep{border:0;border-top:2px dashed var(--line);margin:4px 0;width:100%}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--rose);flex:none}
+#recBtn[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--rose) 55%,#000)}
+#recBtn[aria-pressed="true"] .dot{background:#fff}
+
+/* report */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:var(--bg);border-radius:16px;padding:12px 14px}
+.stat b{display:block;font-family:var(--f-read);font-size:28px;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-read);font-size:18px;min-height:40px;padding:4px 14px}
+.list{display:flex;flex-direction:column;gap:6px}
+.danger{color:var(--rose)}
+.ltr{direction:ltr;text-align:left}
+/* praise bubble that pops in after a well-read sentence */
+.cheer{position:fixed;z-index:20;left:50%;top:calc(env(safe-area-inset-top,0px) + 18px);transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;background:var(--sun);color:var(--sun-ink);
+  font-size:22px;font-weight:700;white-space:nowrap;box-shadow:0 5px 0 color-mix(in srgb,var(--sun) 55%,#000)}
+.cheer .ic{width:28px;height:28px;fill:var(--orange);stroke:var(--orange)}
+.cheer.pop{animation:pop 1.6s ease both}
+@keyframes pop{0%{transform:translate(-50%,-20px) scale(.6);opacity:0}12%{transform:translate(-50%,0) scale(1.08);opacity:1}20%{transform:translate(-50%,0) scale(1)}82%{opacity:1}100%{transform:translate(-50%,-10px);opacity:0}}
+.cheer.try{background:var(--surface);color:var(--rose);border:2px solid var(--rose);box-shadow:0 5px 0 var(--rose)}
+.cheer.try .ic{display:none}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:19}
+@media (prefers-reduced-motion:reduce){.cheer.pop{animation:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h15l-4-4M20 16H5l4 4"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 5l-7 7 7 7"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-7M12 20V5M19 20v-11M3 20h18"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-retry" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.3-5.4M4.5 4v4.5H9"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5.5v13"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5zM12 6.5v13"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .9-1 1.6v.4M12 17.2v.1"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></symbol>
+</svg>
+
+<div class="cheer" id="cheer" role="status" aria-live="polite" hidden><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg><span id="cheerText"></span></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="logo"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></span><div><b>Leesvriend</b><small data-t="sub"></small></div></div>
+    <span class="mode" id="modeTag"></span>
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <h1 data-t="pick"></h1>
+    <div class="langs" id="langs"><span data-t="homeLang"></span>
+      <div class="seg"><button data-lang="he" lang="he">עברית</button><button data-lang="en" lang="en">English</button><button data-lang="ar" lang="ar">العربية</button></div>
+    </div>
+    <div class="covers" id="storyList"></div>
+    <p class="note" id="modeNote"></p>
+    <div class="row"><button class="soft" id="toReport"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg><span data-t="report"></span></button></div>
+    <details class="panel" id="settings">
+      <summary><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg><span data-t="azTitle"></span></summary>
+      <p class="note" data-t="azNote"></p>
+      <label for="azKey"><span data-t="azKey"></span><input id="azKey" type="password" autocomplete="off" class="ltr" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx"></label>
+      <label for="azRegion"><span data-t="azRegion"></span><input id="azRegion" type="text" class="ltr" placeholder="westeurope"></label>
+      <div class="row"><button class="primary" id="azSave"><span data-t="save"></span></button><button class="soft" id="azClear"><span data-t="clearKey"></span></button></div>
+      <p class="status" id="azStatus"></p>
+    </details>
+  </section>
+
+  <!-- READ -->
+  <section id="read" hidden>
+    <div class="bar"><button class="iconbtn" id="backBtn"><svg class="ic flip" aria-hidden="true"><use href="#i-back"/></svg><span data-t="back"></span></button><span class="level" id="readLevel"></span></div>
+    <div class="page">
+      <h2 id="readTitle" dir="ltr" lang="nl"></h2>
+      <div class="prog"><span id="progFill"></span></div>
+      <div class="text" id="storyText" dir="ltr" lang="nl"></div>
+    </div>
+    <p class="status" id="readStatus"></p>
+    <p class="heard" id="heard" dir="ltr" lang="nl" hidden></p>
+    <div class="orbrow" id="micControls">
+      <button class="orb" id="micBtn" aria-pressed="false"><span class="orb-c"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></span><span id="micLabel"></span></button>
+      <div class="row center"><button class="soft" id="againBtn" hidden><svg class="ic" aria-hidden="true"><use href="#i-retry"/></svg><span data-t="again"></span></button><button class="primary" id="nextBtn" hidden><span data-t="next"></span><svg class="ic flip" aria-hidden="true"><use href="#i-next"/></svg></button></div>
+    </div>
+    <div class="row center" id="parentControls" hidden>
+      <button class="primary" id="okBtn"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span data-t="ok"></span></button>
+      <button class="soft" id="helpBtn"><svg class="ic" aria-hidden="true"><use href="#i-vol"/></svg><span data-t="hearWord"></span></button>
+      <button class="iconbtn" id="skipBtn"><svg class="ic flip" aria-hidden="true"><use href="#i-skip"/></svg><span data-t="skip"></span></button>
+    </div>
+    <div class="legend" id="legend"></div>
+    <p class="note center" data-t="tapHint"></p>
+  </section>
+
+  <!-- HOME-LANGUAGE PART -->
+  <section id="homepart" hidden>
+    <div class="panel">
+      <div class="ph"><span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><h2 data-t="nowIn"></h2></div>
+      <p class="home-text" id="homeText"></p>
+      <div class="row"><button class="soft" id="homeListen"><svg class="ic" aria-hidden="true"><use href="#i-vol"/></svg><span data-t="listen"></span></button></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-ask"/></svg></span><h2 id="qText"></h2></div>
+      <div class="opts" id="qOpts"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></span><h2 data-t="newWords"></h2></div>
+      <div class="vocab" id="vocab"></div>
+    </div>
+    <button class="primary big" id="finishBtn" disabled><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span data-t="finish"></span></button>
+  </section>
+
+  <!-- END: points + practice -->
+  <section id="done" hidden>
+    <div class="panel score">
+      <div class="starrow" id="starRow"></div>
+      <h2 id="doneTitle"></h2>
+      <div class="points"><b id="pointsNum">0</b><span>/ 100 <span data-t="points"></span></span></div>
+      <p class="muted" id="pointsDetail"></p>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></span><h2 data-t="recTitle"></h2></div>
+      <p class="note" data-t="recNote"></p>
+      <span class="level" id="recPos" style="align-self:flex-start"></span>
+      <div id="recText" dir="ltr" lang="nl"></div>
+      <div class="orbrow"><button class="orb" id="chkBtn" aria-pressed="false"><span class="orb-c"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></span><span id="chkLabel"></span></button></div>
+      <p class="verdict" id="chkVerdict" hidden></p>
+      <div class="row center">
+        <button class="iconbtn" id="prevBtn"><svg class="ic flip" aria-hidden="true"><use href="#i-prev"/></svg><span data-t="recPrev"></span></button>
+        <button class="iconbtn" id="nextSentBtn"><span data-t="recNext"></span><svg class="ic flip" aria-hidden="true"><use href="#i-next"/></svg></button>
+      </div>
+      <hr class="sep">
+      <p class="note" data-t="recCompareNote"></p>
+      <div class="row"><button class="soft" id="recBtn" aria-pressed="false"><span class="dot"></span><span id="recLabel"></span></button></div>
+      <div class="row">
+        <button class="soft" id="modelBtn"><svg class="ic" aria-hidden="true"><use href="#i-vol"/></svg><span data-t="recModel"></span></button>
+        <button class="soft" id="playBtn" disabled><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg><span data-t="recPlay"></span></button>
+        <button class="primary" id="bothBtn" disabled><svg class="ic" aria-hidden="true"><use href="#i-swap"/></svg><span data-t="recBoth"></span></button>
+      </div>
+      <p class="status" id="recStatus"></p>
+      <p class="note" data-t="recPrivacy"></p>
+    </div>
+    <button class="primary big" id="homeBtn"><span data-t="nextStory"></span><svg class="ic flip" aria-hidden="true"><use href="#i-next"/></svg></button>
+  </section>
+
+  <!-- PARENT REPORT -->
+  <section id="report" hidden>
+    <div class="bar"><button class="iconbtn" id="reportBack"><svg class="ic flip" aria-hidden="true"><use href="#i-back"/></svg><span data-t="back2"></span></button></div>
+    <div class="panel">
+      <div class="ph"><span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></span><h2 data-t="report"></h2></div>
+      <div class="stats" id="stats"></div>
+      <div><p style="margin-bottom:8px"><b data-t="practice"></b> <span class="muted" data-t="tapHear"></span></p><div class="chips" id="practice" dir="ltr"></div></div>
+      <div class="list" id="history"></div>
+      <p class="note" data-t="deviceNote"></p>
+    </div>
+    <div class="row"><button class="iconbtn danger" id="resetBtn"></button></div>
+    <p class="note" id="resetConfirm" hidden></p>
+  </section>
+</div>
+<script>const ICON = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const COVERS = {"kat": "<svg class=\"cover\" viewBox=\"0 0 320 140\" aria-hidden=\"true\"><rect width=\"320\" height=\"140\" fill=\"#C7EFE9\"/><circle cx=\"276\" cy=\"30\" r=\"16\" fill=\"#FFD23F\"/><rect y=\"86\" width=\"320\" height=\"54\" fill=\"#36B3A4\"/><path d=\"M20 112q10-6 20 0M120 124q10-6 20 0M250 116q10-6 20 0\" stroke=\"#E6FBF8\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M0 86h178v-10H0z\" fill=\"#7CC36E\"/><path d=\"M56 60q-26-4-20-30\" stroke=\"#FF7A1A\" stroke-width=\"9\" fill=\"none\" stroke-linecap=\"round\"/><ellipse cx=\"90\" cy=\"62\" rx=\"36\" ry=\"17\" fill=\"#FF7A1A\"/><rect x=\"68\" y=\"66\" width=\"9\" height=\"12\" rx=\"4\" fill=\"#FF7A1A\"/><rect x=\"104\" y=\"66\" width=\"9\" height=\"12\" rx=\"4\" fill=\"#FF7A1A\"/><circle cx=\"126\" cy=\"48\" r=\"17\" fill=\"#FF7A1A\"/><path d=\"M114 38l3-15 10 10zM128 33l10-10 3 15z\" fill=\"#FF7A1A\"/><circle cx=\"132\" cy=\"46\" r=\"2.8\" fill=\"#1E2A5A\"/><path d=\"M140 52l8-1M140 55l8 2\" stroke=\"#1E2A5A\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><g transform=\"rotate(-28 222 70)\"><ellipse cx=\"222\" cy=\"70\" rx=\"19\" ry=\"9\" fill=\"#FFD23F\"/><path d=\"M203 70l-11-8v16z\" fill=\"#FFD23F\"/><circle cx=\"232\" cy=\"68\" r=\"2.2\" fill=\"#1E2A5A\"/></g><path d=\"M196 96q8-12 16 0M226 98q6-9 12 0\" stroke=\"#fff\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/></svg>", "fiets": "<svg class=\"cover\" viewBox=\"0 0 320 140\" aria-hidden=\"true\"><rect width=\"320\" height=\"140\" fill=\"#D3E4FF\"/><circle cx=\"46\" cy=\"32\" r=\"16\" fill=\"#FFD23F\"/><path d=\"M178 34h40M196 26h34\" stroke=\"#fff\" stroke-width=\"8\" stroke-linecap=\"round\"/><rect y=\"104\" width=\"320\" height=\"36\" fill=\"#AEB9D8\"/><ellipse cx=\"236\" cy=\"118\" rx=\"62\" ry=\"11\" fill=\"#6FA4FF\"/><path d=\"M206 116q6-8 12 0M246 120q6-8 12 0\" stroke=\"#fff\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"96\" cy=\"92\" r=\"24\" fill=\"none\" stroke=\"#1E2A5A\" stroke-width=\"6\"/><circle cx=\"170\" cy=\"92\" r=\"24\" fill=\"none\" stroke=\"#1E2A5A\" stroke-width=\"6\"/><path d=\"M96 92l26-30h36l12 30M122 62l18 30h30M140 92l-18-30M118 56h14M158 62l-4-14h12\" stroke=\"#E5484D\" stroke-width=\"7\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"140\" cy=\"92\" r=\"5\" fill=\"#1E2A5A\"/></svg>", "opa": "<svg class=\"cover\" viewBox=\"0 0 320 140\" aria-hidden=\"true\"><rect width=\"320\" height=\"140\" fill=\"#E3F4CF\"/><rect y=\"112\" width=\"320\" height=\"28\" fill=\"#86C766\"/><rect x=\"146\" y=\"64\" width=\"20\" height=\"52\" rx=\"4\" fill=\"#9A6233\"/><circle cx=\"156\" cy=\"50\" r=\"38\" fill=\"#2E9E5B\"/><circle cx=\"118\" cy=\"66\" r=\"26\" fill=\"#2E9E5B\"/><circle cx=\"194\" cy=\"66\" r=\"26\" fill=\"#2E9E5B\"/><g fill=\"#E5484D\"><circle cx=\"138\" cy=\"40\" r=\"7\"/><circle cx=\"174\" cy=\"34\" r=\"7\"/><circle cx=\"112\" cy=\"70\" r=\"7\"/><circle cx=\"196\" cy=\"74\" r=\"7\"/><circle cx=\"158\" cy=\"66\" r=\"7\"/></g><path d=\"M222 116l18-70M244 116l18-70M226 100h20M231 82h20M236 64h20\" stroke=\"#C98A3F\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M40 120q8-16 26-12 6-14 22-4\" fill=\"none\" stroke=\"#5DA944\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"282\" cy=\"122\" rx=\"22\" ry=\"8\" fill=\"#F2C76B\"/><path d=\"M262 120q20-16 40 0\" fill=\"#E9A84D\"/></svg>"};
+
+/* ---------- UI text in the three home languages ---------- */
+const T = {
+  he:{ dir:"rtl", locale:"he-IL", voice:"he-IL",
+    sub:"מורה קריאה: הולנדית + עברית", homeLang:"שפת הבית:", pick:"איזה סיפור נקרא היום?", report:"דוח להורים",
+    azTitle:"בדיקת הגייה מדויקת (Microsoft Azure)", azNote:"בלי מפתח, האפליקציה בודקת רק אם המילה זוהתה. עם מפתח של Azure Speech היא נותנת ציון הגייה לכל מילה. המפתח נשמר רק בדפדפן הזה.",
+    azKey:"מפתח (Key)", azRegion:"אזור (Region)", save:"שמור", clearKey:"מחק מפתח",
+    azNeed:"הדביקו את המפתח מהעמוד Keys and Endpoint במשאב ה־Speech שלכם.", azSaved:"נשמר. בדיקת ההגייה של Azure פעילה.", azCleared:"המפתח נמחק.", azLoadFail:"לא הצלחנו לטעון את Azure. בדקו את החיבור לאינטרנט.",
+    tag:{ azure:"בדיקת הגייה: Azure", chrome:"זיהוי דיבור: Chrome", parent:"מצב הורה מקשיב" },
+    note:{ azure:"הילד קורא משפט שלם בקול. האפליקציה נותנת ציון הגייה לכל מילה ועוברת לבד למשפט הבא.",
+           chrome:"הילד קורא משפט אחד בכל פעם. אחרי כל משפט האפליקציה אומרת אם זה היה טוב, או מבקשת לנסות שוב. לבדיקת הגייה מדויקת יותר, הוסיפו מפתח Azure למטה.",
+           parent:"כאן אין גישה למיקרופון. הורידו את הקובץ ופתחו אותו ב־Chrome כדי שהאפליקציה תקשיב לילד." },
+    lgAzure:["הגייה טובה","כמעט","צריך לתרגל"], lgChrome:["המילה זוהתה","דילגת על המילה"],
+    start:"התחל להקריא", again:"קרא שוב את המשפט", next:"המשך", ok:"נכון", hearWord:"השמע את המילה", skip:"דלג",
+    tapHint:"אפשר ללחוץ על כל מילה כדי לשמוע איך אומרים אותה.", back:"חזרה לסיפורים", back2:"חזרה",
+    points:"נקודות", pdRead:(ok,t)=>`קריאה: ${ok} מתוך ${t} מילים`, pdQuizOk:"שאלה: נכון ✓", pdQuizNo:"שאלה: ננסה בפעם הבאה",
+    recTitle:"תרגל כל משפט", recNote:"לחץ \"בדוק אותי\" וקרא את המשפט הצהוב בקול. האפליקציה תגיד לך אם אמרת אותו טוב.", recStart:"הקלט משפט",
+    recCompareNote:"רוצה לשמוע את עצמך? הקלט את המשפט ולחץ \"השווה\": קודם הקריאה הנכונה, ואחריה הקול שלך.",
+    chkBtn:"בדוק אותי", chkListening:"מקשיב… קרא את המשפט הצהוב בקול.", chkGood:"✓ טוב מאוד! אמרת את כל המילים נכון.",
+    chkAlmost:"כמעט! המילים באדום לא היו ברורות. הקשב להן ונסה שוב.", chkBad:"עדיין לא. הקשב לקריאה הנכונה ונסה שוב.", chkNone:"לא שמעתי. לחץ \"בדוק אותי\" וקרא בקול רם.", recStop:"עצור",
+    recPlay:"אני", recModel:"נכון", recBoth:"השווה", recNext:"המשפט הבא", recPrev:"המשפט הקודם", recSent:(i,n)=>`משפט ${i} מתוך ${n}`,
+    recRecording:"מקליט… קרא את המשפט הצהוב. ההקלטה תיעצר לבד כשתסיים.", recDone:"מוכן! לחץ \"השווה\" כדי לשמוע את הקריאה הנכונה ואז את עצמך.",
+    recPrivacy:"ההקלטה לא נשמרת. היא נמחקת כשיוצאים מהמסך.",
+    cheers:["כל הכבוד!","מעולה!","יופי!","אלוף!","סופר!"], tryBubble:"נסה שוב!", tryAgainSay:"כמעט! הקשב למילים באדום ונסה שוב.",
+    heard:"שמעתי:", noSpeech:"לא שמעתי כלום עדיין. קרא בקול רם יותר, קרוב לטלפון.", srNetwork:"אין חיבור לשירות זיהוי הדיבור. בדקו שיש אינטרנט ונסו שוב.", srLang:"הטלפון לא מזהה הולנדית. התקינו או עדכנו את אפליקציית Google ונסו שוב.", srOther:"זיהוי הדיבור נעצר. לחצו שוב על המיקרופון.",
+    micOn:"הפעל מיקרופון", micOff:"כבה מיקרופון",
+    micBlocked:"המיקרופון חסום. בעמוד שפורסם בקישור אין גישה למיקרופון, אז הורידו את הקובץ ופתחו אותו ב־Chrome. אם זה כבר הקובץ, לחצו על סמל המנעול ליד הכתובת ואשרו מיקרופון.",
+    st:{ azure:"לחצו על כפתור המיקרופון וקראו בקול את המשפט הצהוב.", chrome:"לחצו על המיקרופון וקראו את המשפט הצהוב. אחרי כל משפט תשמעו אם זה היה טוב.", parent:"הילד קורא את המילה המסומנת. ההורה לוחץ \"נכון\"." },
+    listenSent:"אני מקשיב… קרא את המשפט הצהוב.", loading:"טוען את Azure… נסו שוב בעוד רגע.", tryAgain:"נסה שוב",
+    keyBad:"Azure דחה את המפתח. בדקו את המפתח והאזור בהגדרות.", noMic:"אין גישה למיקרופון. אשרו גישה בדפדפן ונסו שוב.", netErr:"משהו השתבש בחיבור ל־Azure. בדקו את האינטרנט ונסו שוב.",
+    notHeard:"לא שמעתי. לחץ על המיקרופון וקרא שוב בקול.", almost:"כמעט! לחץ על המילים האדומות כדי לשמוע אותן, ואז קרא שוב את המשפט.",
+    moveOn:"ממשיכים. נתרגל את המילים האדומות בפעם הבאה.", great:"מצוין!", stuck:"נתקעת? לחץ על המילה הצהובה כדי לשמוע אותה.",
+    stopped:"עצרנו. לחצו כדי להמשיך.", listenChrome:"אני מקשיב… קרא בקול.", noSR:"הדפדפן הזה לא תומך בזיהוי דיבור. נסו ב־Chrome.",
+    stop:"עצור", cont:"המשך להקריא", micDenied:"אין גישה למיקרופון. אשרו גישה בדפדפן, או שההורה ילחץ \"נכון\" אחרי כל מילה.", finished:"סיימת לקרוא את כל הסיפור!",
+    nowIn:"עכשיו בעברית", listen:"השמע בעברית", newWords:"מילים חדשות", finish:"סיימתי!",
+    well:"כל הכבוד!", sumScore:(a,ok,t)=>`ציון ההגייה שלך: ${a} מתוך 100. ${ok} מתוך ${t} מילים נאמרו מצוין.`, sumPlain:(t,ok)=>`קראת ${t} מילים, ${ok} מהן לבד בלי עזרה.`,
+    nextStory:"לסיפור הבא", practice:"מילים לתרגל", tapHear:"(לחצו כדי לשמוע)", none:"עוד אין. אחרי כמה סיפורים יופיעו כאן מילים שהיו קשות.",
+    deviceNote:"הנתונים נשמרים רק בדפדפן הזה, במכשיר הזה. הקול של הילד לא נשמר.", reset:"אפס נתונים", resetAgain:"לחצו שוב כדי למחוק הכל", resetDone:"הנתונים נמחקו.",
+    tiles:["סיפורים שנקראו","דקות קריאה","ציון הגייה ממוצע","מילים נכונות","שאלות הבנה נכונות"], hWords:"מילים", hPron:"הגייה", hMin:"דק׳" },
+  en:{ dir:"ltr", locale:"en-GB", voice:"en-GB",
+    sub:"Reading tutor: Dutch + English", homeLang:"Home language:", pick:"Which story shall we read today?", report:"Parent report",
+    azTitle:"Exact pronunciation check (Microsoft Azure)", azNote:"Without a key, the app only checks whether each word was recognised. With an Azure Speech key it scores the pronunciation of every word. The key is stored only in this browser.",
+    azKey:"Key", azRegion:"Region", save:"Save", clearKey:"Delete key",
+    azNeed:"Paste the key from the Keys and Endpoint page of your Speech resource.", azSaved:"Saved. Azure pronunciation checking is on.", azCleared:"Key deleted.", azLoadFail:"Couldn't load Azure. Check your internet connection.",
+    tag:{ azure:"Pronunciation check: Azure", chrome:"Speech recognition: Chrome", parent:"Parent listens" },
+    note:{ azure:"Your child reads a whole sentence aloud. The app scores each word and moves on to the next sentence by itself.",
+           chrome:"Your child reads one sentence at a time. After each sentence the app says if it was good, or asks to try again. For a more exact pronunciation check, add an Azure key below.",
+           parent:"There's no microphone access here. Download the file and open it in Chrome so the app can listen to your child." },
+    lgAzure:["Good pronunciation","Almost","Needs practice"], lgChrome:["Word recognised","Word skipped"],
+    start:"Start reading", again:"Read the sentence again", next:"Continue", ok:"Correct", hearWord:"Hear the word", skip:"Skip",
+    tapHint:"Tap any word to hear how it's said.", back:"Back to stories", back2:"Back",
+    points:"points", pdRead:(ok,t)=>`Reading: ${ok} of ${t} words`, pdQuizOk:"Question: correct ✓", pdQuizNo:"Question: try again next time",
+    recTitle:"Practise each sentence", recNote:"Tap \"Check me\" and read the yellow sentence aloud. The app tells you if you said it well.", recStart:"Record sentence",
+    recCompareNote:"Want to hear yourself? Record the sentence and tap \"Compare\": first the correct reading, then your voice.",
+    chkBtn:"Check me", chkListening:"Listening… read the yellow sentence aloud.", chkGood:"✓ Very good! You said every word correctly.",
+    chkAlmost:"Almost! The red words weren't clear. Listen to them and try again.", chkBad:"Not yet. Listen to the correct reading and try again.", chkNone:"I didn't hear you. Tap \"Check me\" and read loudly.", recStop:"Stop",
+    recPlay:"Me", recModel:"Correct", recBoth:"Compare", recNext:"Next sentence", recPrev:"Previous sentence", recSent:(i,n)=>`Sentence ${i} of ${n}`,
+    recRecording:"Recording… read the yellow sentence. It stops by itself when you finish.", recDone:"Ready! Tap \"Compare\" to hear the correct reading, then yourself.",
+    recPrivacy:"The recording isn't saved. It's deleted when you leave this screen.",
+    cheers:["Great job!","Awesome!","Well done!","Super!","Fantastic!"], tryBubble:"Try again!", tryAgainSay:"Almost! Listen to the red words and try again.",
+    heard:"I heard:", noSpeech:"I haven't heard anything yet. Read louder, close to the phone.", srNetwork:"Can't reach the speech recognition service. Check your internet and try again.", srLang:"This phone can't recognise Dutch. Install or update the Google app and try again.", srOther:"Speech recognition stopped. Tap the microphone again.",
+    micOn:"Turn on microphone", micOff:"Turn off microphone",
+    micBlocked:"The microphone is blocked. The published page can't use the microphone, so download the file and open it in Chrome. If this is already the file, click the lock icon next to the address and allow the microphone.",
+    st:{ azure:"Tap the microphone button and read the yellow sentence aloud.", chrome:"Tap the microphone and read the yellow sentence. After each sentence you'll hear if it was good.", parent:"Your child reads the highlighted word. The parent taps \"Correct\"." },
+    listenSent:"Listening… read the yellow sentence.", loading:"Loading Azure… try again in a moment.", tryAgain:"Try again",
+    keyBad:"Azure rejected the key. Check the key and region in settings.", noMic:"No microphone access. Allow it in the browser and try again.", netErr:"Something went wrong connecting to Azure. Check your internet and try again.",
+    notHeard:"I didn't hear you. Tap the microphone and read again.", almost:"Almost! Tap the red words to hear them, then read the sentence again.",
+    moveOn:"Let's keep going. We'll practise the red words next time.", great:"Excellent!", stuck:"Stuck? Tap the yellow word to hear it.",
+    stopped:"Paused. Tap to continue.", listenChrome:"Listening… read aloud.", noSR:"This browser doesn't support speech recognition. Try Chrome.",
+    stop:"Stop", cont:"Keep reading", micDenied:"No microphone access. Allow it in the browser, or the parent can tap \"Correct\" after each word.", finished:"You read the whole story!",
+    nowIn:"Now in English", listen:"Listen in English", newWords:"New words", finish:"I'm done!",
+    well:"Well done!", sumScore:(a,ok,t)=>`Your pronunciation score: ${a} out of 100. ${ok} of ${t} words were said perfectly.`, sumPlain:(t,ok)=>`You read ${t} words, ${ok} of them on your own.`,
+    nextStory:"Next story", practice:"Words to practise", tapHear:"(tap to hear)", none:"None yet. After a few stories, the hard words will show up here.",
+    deviceNote:"Data is stored only in this browser, on this device. Your child's voice is never saved.", reset:"Reset data", resetAgain:"Tap again to delete everything", resetDone:"Data deleted.",
+    tiles:["Stories read","Minutes reading","Avg. pronunciation","Words correct","Comprehension correct"], hWords:"words", hPron:"pronunciation", hMin:"min" },
+  ar:{ dir:"rtl", locale:"ar", voice:"ar-SA",
+    sub:"معلّم قراءة: هولندي + عربي", homeLang:"لغة البيت:", pick:"أيّ قصة نقرأ اليوم؟", report:"تقرير للأهل",
+    azTitle:"فحص دقيق للنطق (Microsoft Azure)", azNote:"بدون مفتاح، يتحقّق التطبيق فقط من التعرّف على الكلمة. مع مفتاح Azure Speech يعطي درجة نطق لكل كلمة. يُحفظ المفتاح في هذا المتصفح فقط.",
+    azKey:"المفتاح (Key)", azRegion:"المنطقة (Region)", save:"حفظ", clearKey:"حذف المفتاح",
+    azNeed:"الصق المفتاح من صفحة Keys and Endpoint في مورد Speech الخاص بك.", azSaved:"تم الحفظ. فحص النطق عبر Azure مفعّل.", azCleared:"تم حذف المفتاح.", azLoadFail:"تعذّر تحميل Azure. تحقّق من الاتصال بالإنترنت.",
+    tag:{ azure:"فحص النطق: Azure", chrome:"التعرّف على الكلام: Chrome", parent:"الأهل يستمعون" },
+    note:{ azure:"يقرأ الطفل جملة كاملة بصوت عالٍ. يعطي التطبيق درجة لكل كلمة وينتقل وحده إلى الجملة التالية.",
+           chrome:"يقرأ الطفل جملة واحدة في كل مرة. بعد كل جملة يقول التطبيق إن كانت جيدة، أو يطلب المحاولة مرة أخرى. لفحص أدق للنطق، أضف مفتاح Azure في الأسفل.",
+           parent:"لا يوجد وصول إلى الميكروفون هنا. نزّل الملف وافتحه في Chrome لكي يستمع التطبيق إلى الطفل." },
+    lgAzure:["نطق جيد","تقريبًا","يحتاج تمرينًا"], lgChrome:["تم التعرّف على الكلمة","تخطّيت الكلمة"],
+    start:"ابدأ القراءة", again:"اقرأ الجملة مرة أخرى", next:"تابع", ok:"صحيح", hearWord:"استمع إلى الكلمة", skip:"تخطَّ",
+    tapHint:"اضغط على أي كلمة لتسمع كيف تُلفظ.", back:"العودة إلى القصص", back2:"رجوع",
+    points:"نقطة", pdRead:(ok,t)=>`القراءة: ${ok} من ${t} كلمة`, pdQuizOk:"السؤال: صحيح ✓", pdQuizNo:"السؤال: حاول في المرة القادمة",
+    recTitle:"تمرّن على كل جملة", recNote:"اضغط \"افحصني\" واقرأ الجملة الصفراء بصوت عالٍ. سيخبرك التطبيق إن نطقتها جيدًا.", recStart:"سجّل الجملة",
+    recCompareNote:"تريد أن تسمع نفسك؟ سجّل الجملة واضغط \"قارن\": أولًا القراءة الصحيحة، ثم صوتك.",
+    chkBtn:"افحصني", chkListening:"أنا أستمع… اقرأ الجملة الصفراء بصوت عالٍ.", chkGood:"✓ ممتاز! نطقت كل الكلمات بشكل صحيح.",
+    chkAlmost:"تقريبًا! الكلمات الحمراء لم تكن واضحة. استمع إليها وحاول مرة أخرى.", chkBad:"ليس بعد. استمع إلى القراءة الصحيحة وحاول مرة أخرى.", chkNone:"لم أسمعك. اضغط \"افحصني\" واقرأ بصوت عالٍ.", recStop:"توقّف",
+    recPlay:"أنا", recModel:"الصحيح", recBoth:"قارن", recNext:"الجملة التالية", recPrev:"الجملة السابقة", recSent:(i,n)=>`الجملة ${i} من ${n}`,
+    recRecording:"جارٍ التسجيل… اقرأ الجملة الصفراء. يتوقّف التسجيل وحده عندما تنتهي.", recDone:"جاهز! اضغط \"قارن\" لتسمع القراءة الصحيحة ثم صوتك.",
+    recPrivacy:"لا يُحفظ التسجيل. يُحذف عندما تغادر هذه الشاشة.",
+    cheers:["أحسنت!","ممتاز!","رائع!","برافو!","عظيم!"], tryBubble:"حاول مرة أخرى!", tryAgainSay:"تقريبًا! استمع إلى الكلمات الحمراء وحاول مرة أخرى.",
+    heard:"سمعت:", noSpeech:"لم أسمع شيئًا بعد. اقرأ بصوت أعلى وبالقرب من الهاتف.", srNetwork:"لا يمكن الوصول إلى خدمة التعرّف على الكلام. تحقّق من الإنترنت وحاول مرة أخرى.", srLang:"هذا الهاتف لا يتعرّف على الهولندية. ثبّت تطبيق Google أو حدّثه وحاول مرة أخرى.", srOther:"توقّف التعرّف على الكلام. اضغط على الميكروفون مرة أخرى.",
+    micOn:"شغّل الميكروفون", micOff:"أطفئ الميكروفون",
+    micBlocked:"الميكروفون محجوب. الصفحة المنشورة لا تستطيع استخدام الميكروفون، فنزّل الملف وافتحه في Chrome. إذا كان هذا هو الملف، اضغط على رمز القفل بجانب العنوان واسمح بالميكروفون.",
+    st:{ azure:"اضغط على زر الميكروفون واقرأ الجملة الصفراء بصوت عالٍ.", chrome:"اضغط على الميكروفون واقرأ الجملة الصفراء. بعد كل جملة ستسمع إن كانت جيدة.", parent:"يقرأ الطفل الكلمة المظلّلة، ويضغط الأهل \"صحيح\"." },
+    listenSent:"أنا أستمع… اقرأ الجملة الصفراء.", loading:"جارٍ تحميل Azure… حاول بعد لحظة.", tryAgain:"حاول مرة أخرى",
+    keyBad:"رفض Azure المفتاح. تحقّق من المفتاح والمنطقة في الإعدادات.", noMic:"لا يوجد وصول إلى الميكروفون. اسمح بالوصول في المتصفح وحاول مرة أخرى.", netErr:"حدث خطأ في الاتصال بـ Azure. تحقّق من الإنترنت وحاول مرة أخرى.",
+    notHeard:"لم أسمعك. اضغط على الميكروفون واقرأ مرة أخرى.", almost:"تقريبًا! اضغط على الكلمات الحمراء لتسمعها، ثم اقرأ الجملة مرة أخرى.",
+    moveOn:"لنتابع. سنتمرّن على الكلمات الحمراء في المرة القادمة.", great:"ممتاز!", stuck:"هل علِقت؟ اضغط على الكلمة الصفراء لتسمعها.",
+    stopped:"توقّفنا. اضغط للمتابعة.", listenChrome:"أنا أستمع… اقرأ بصوت عالٍ.", noSR:"هذا المتصفح لا يدعم التعرّف على الكلام. جرّب Chrome.",
+    stop:"توقّف", cont:"تابع القراءة", micDenied:"لا يوجد وصول إلى الميكروفون. اسمح بالوصول في المتصفح، أو يضغط الأهل \"صحيح\" بعد كل كلمة.", finished:"قرأت القصة كلها!",
+    nowIn:"الآن بالعربية", listen:"استمع بالعربية", newWords:"كلمات جديدة", finish:"انتهيت!",
+    well:"أحسنت!", sumScore:(a,ok,t)=>`درجة النطق: ${a} من 100. نطقت ${ok} من ${t} كلمة بشكل ممتاز.`, sumPlain:(t,ok)=>`قرأت ${t} كلمة، ${ok} منها وحدك.`,
+    nextStory:"القصة التالية", practice:"كلمات للتمرين", tapHear:"(اضغط لتسمع)", none:"لا شيء بعد. بعد بضع قصص ستظهر هنا الكلمات الصعبة.",
+    deviceNote:"تُحفظ البيانات في هذا المتصفح وعلى هذا الجهاز فقط. لا يُحفظ صوت الطفل.", reset:"مسح البيانات", resetAgain:"اضغط مرة أخرى لحذف كل شيء", resetDone:"تم حذف البيانات.",
+    tiles:["قصص مقروءة","دقائق قراءة","متوسط النطق","كلمات صحيحة","أسئلة فهم صحيحة"], hWords:"كلمة", hPron:"نطق", hMin:"د" }
+};
+
+const STORIES = [
+  { id:"kat", title:"De kat en de vis", level:"AVI M3",
+    text:"Sam heeft een kat. De kat heet Mo. Mo ziet een vis in de sloot. Hij wil de vis pakken. Plons! Mo valt in het water. Sam lacht en haalt hem eruit. Nu is Mo nat en boos.",
+    tr:{
+      he:{ text:"לסאם יש חתול בשם מו. מו ראה דג בתעלה ורצה לתפוס אותו. פלאש! הוא נפל למים. סאם צחק והוציא אותו. עכשיו מו רטוב וכועס.",
+           q:"מה קרה למו בסוף?", opts:["הוא נפל למים ונרטב","הוא תפס את הדג","הוא הלך לישון"], words:["חתול","דג","מים","רטוב"] },
+      en:{ text:"Sam has a cat called Mo. Mo sees a fish in the ditch and wants to catch it. Splash! Mo falls into the water. Sam laughs and pulls him out. Now Mo is wet and grumpy.",
+           q:"What happened to Mo at the end?", opts:["He fell in the water and got wet","He caught the fish","He went to sleep"], words:["cat","fish","water","wet"] },
+      ar:{ text:"عند سام قطّ اسمه مو. رأى مو سمكة في القناة وأراد أن يمسكها. بلوب! وقع مو في الماء. ضحك سام وأخرجه. الآن مو مبتلّ وغاضب.",
+           q:"ماذا حدث لمو في النهاية؟", opts:["وقع في الماء وابتلّ","أمسك السمكة","ذهب لينام"], words:["قطّ","سمكة","ماء","مبتلّ"] } },
+    ok:0, words:["kat","vis","water","nat"] },
+  { id:"fiets", title:"De fiets van Noor", level:"AVI M3",
+    text:"Noor heeft een nieuwe fiets. De fiets is rood. Ze fietst naar school. Op de weg ziet ze een grote plas. Ze rijdt er dwars doorheen. Haar sokken zijn nat, maar ze is blij.",
+    tr:{
+      he:{ text:"לנור יש אופניים חדשים. האופניים אדומים. היא רוכבת לבית הספר. בדרך היא רואה שלולית גדולה, ורוכבת ישר דרכה. הגרביים שלה רטובים, אבל היא שמחה.",
+           q:"באיזה צבע האופניים של נור?", opts:["כחול","אדום","ירוק"], words:["אופניים","אדום","בית ספר","שמח"] },
+      en:{ text:"Noor has a new bike. The bike is red. She rides to school. On the way she sees a big puddle and rides right through it. Her socks are wet, but she is happy.",
+           q:"What colour is Noor's bike?", opts:["Blue","Red","Green"], words:["bike","red","school","happy"] },
+      ar:{ text:"عند نور درّاجة جديدة. الدرّاجة حمراء. تركب نور درّاجتها إلى المدرسة. في الطريق ترى بركة ماء كبيرة، فتعبر من وسطها. جواربها مبتلّة، لكنها سعيدة.",
+           q:"ما لون درّاجة نور؟", opts:["أزرق","أحمر","أخضر"], words:["درّاجة","أحمر","مدرسة","سعيد"] } },
+    ok:1, words:["fiets","rood","school","blij"] },
+  { id:"opa", title:"Opa en de appelboom", level:"AVI E3",
+    text:"In de tuin van opa staat een appelboom. Opa en Daan plukken samen appels. Daan klimt op een ladder. Hij pakt de grootste appel. Opa maakt er een taart van. De taart is heerlijk.",
+    tr:{
+      he:{ text:"בגינה של סבא יש עץ תפוחים. סבא ודאן קוטפים תפוחים ביחד. דאן מטפס על סולם ולוקח את התפוח הכי גדול. סבא מכין מהתפוחים עוגה. העוגה טעימה מאוד.",
+           q:"מה סבא הכין מהתפוחים?", opts:["מיץ","סלט","עוגה"], words:["סבא","תפוח","סולם","עוגה"] },
+      en:{ text:"In Grandpa's garden there is an apple tree. Grandpa and Daan pick apples together. Daan climbs a ladder and takes the biggest apple. Grandpa makes a pie with the apples. The pie is delicious.",
+           q:"What did Grandpa make with the apples?", opts:["Juice","Salad","A pie"], words:["grandpa","apple","ladder","pie"] },
+      ar:{ text:"في حديقة الجدّ شجرة تفاح. يقطف الجدّ ودان التفاح معًا. يصعد دان على سلّم ويأخذ أكبر تفاحة. يصنع الجدّ من التفاح كعكة. الكعكة لذيذة جدًا.",
+           q:"ماذا صنع الجدّ من التفاح؟", opts:["عصيرًا","سلطة","كعكة"], words:["جدّ","تفاحة","سلّم","كعكة"] } },
+    ok:2, words:["opa","appel","ladder","taart"] }
+];
+
+/* ---------- storage (per device, optional) ---------- */
+const KEY = "leesvriend-v1", AZ = "leesvriend-azure", LANG = "leesvriend-lang";
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {sessions:[],practice:{}}; }catch(e){ return {sessions:[],practice:{}}; } }
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+function loadAz(){ try{ return JSON.parse(localStorage.getItem(AZ)) || null; }catch(e){ return null; } }
+let data = load(), az = loadAz(), lang = "he";
+try{ const l = localStorage.getItem(LANG); if (T[l]) lang = l; }catch(e){}
+const L = () => T[lang];
+
+/* ---------- speech out ---------- */
+function voiceFor(prefix){ try{ return speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith(prefix)); }catch(e){ return null; } }
+function say(text, code, onend){
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = code; u.rate = code.startsWith("nl") ? 0.8 : 0.95;
+    const v = voiceFor(code.slice(0,2)); if (v) u.voice = v;
+    if (onend) u.onend = onend;
+    speechSynthesis.speak(u);
+  }catch(e){ if (onend) onend(); }
+}
+try{ speechSynthesis.onvoiceschanged = () => {}; }catch(e){}
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const norm = s => s.toLowerCase().normalize("NFC").replace(/[^a-zà-ÿ]/g,"");
+const bare = s => s.replace(/[^\p{L}]/gu,"");
+function lev(a,b){
+  const m=a.length,n=b.length, d=Array.from({length:m+1},(_,i)=>[i]);
+  for(let j=1;j<=n;j++) d[0][j]=j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+// speech recognition often writes short Dutch words and names a little differently; accept the common near-misses
+const ALIAS = { de:["die","the","te","du","da"], mo:["moe","mou","mow","mos","moo","mooi","moet","more"], sam:["sem","zam","sum","some"],
+  een:["en","eén","één"], het:["hat","ed"], is:["es","ies"], hij:["hei","hey","hi","high"], ze:["zij","zie","se","zei"],
+  opa:["oppa","opah","oma"], daan:["dan","daam","don"], noor:["nor","nur","noord","nora"], kat:["cat","kad","kaat"], vis:["fis","fish"] };
+function close(heard, want){
+  if (!heard || !want) return false;
+  if (heard === want || (ALIAS[want] && ALIAS[want].includes(heard))) return true;
+  const d = lev(heard, want);
+  if (want.length <= 4) return heard[0] === want[0] && d <= 1;
+  if (want.length <= 7) return d <= 1 || (heard.startsWith(want.slice(0,4)) && d <= 2);
+  return d <= 2;
+}
+const SECTIONS = ["home","read","homepart","done","report"];
+let current = "home";
+function show(id){ current = id; SECTIONS.forEach(s => $(s).hidden = s !== id); window.scrollTo(0,0); }
+function status(text, live){ const p = $("readStatus"); p.textContent = ""; if (live){ const d = document.createElement("span"); d.className = "listening"; p.appendChild(d); } p.appendChild(document.createTextNode(text)); }
+
+/* ---------- language ---------- */
+function applyLang(){
+  const t = L();
+  document.documentElement.lang = lang; document.documentElement.dir = t.dir;
+  document.querySelectorAll("[data-t]").forEach(el => { const v = t[el.dataset.t]; if (typeof v === "string") el.textContent = v; });
+  document.querySelectorAll("#langs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  $("resetBtn").textContent = t.reset;
+  $("doneTitle").textContent = t.well;
+  pickEngine();
+}
+document.querySelectorAll("#langs button").forEach(b => b.onclick = () => {
+  lang = b.dataset.lang; try{ localStorage.setItem(LANG, lang); }catch(e){}
+  applyLang(); renderHome();
+});
+
+/* ---------- engines ---------- */
+// "azure": per-word pronunciation scores; "chrome": free browser recognition (word heard or not); "parent": no microphone here
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let engine = "parent", sdkLoading = null;
+function loadSdk(){
+  if (window.SpeechSDK) return Promise.resolve();
+  if (sdkLoading) return sdkLoading;
+  sdkLoading = new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk@1.40.0/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js";
+    s.onload = () => window.SpeechSDK ? res() : rej(); s.onerror = () => { sdkLoading = null; rej(); };
+    document.head.appendChild(s);
+  });
+  return sdkLoading;
+}
+function legendItem(color, text, wavy){
+  const s = document.createElement("span"), b = document.createElement("b");
+  b.textContent = "Aa"; b.style.fontFamily = "var(--f-read)"; b.style.marginInlineEnd = "6px";
+  if (wavy){ b.style.textDecoration = "underline wavy var(--bad)"; b.style.textUnderlineOffset = "4px"; } else b.style.color = color;
+  s.appendChild(b); s.appendChild(document.createTextNode(text)); return s;
+}
+function pickEngine(){
+  const t = L();
+  engine = az && az.key ? "azure" : (SR ? "chrome" : "parent");
+  $("modeTag").textContent = t.tag[engine];
+  $("modeNote").textContent = t.note[engine];
+  $("micControls").hidden = false;
+  $("parentControls").hidden = engine !== "parent";
+  const lg = $("legend"); lg.textContent = "";
+  if (engine === "azure") [["var(--ok)",t.lgAzure[0]],["var(--almost)",t.lgAzure[1]],["var(--bad)",t.lgAzure[2]]].forEach(([c,x]) => lg.appendChild(legendItem(c,x)));
+  else { lg.appendChild(legendItem("var(--ok)", t.lgChrome[0])); lg.appendChild(legendItem("", t.lgChrome[1], true)); }
+  if (engine === "azure") loadSdk().catch(() => { $("azStatus").textContent = L().azLoadFail; });
+}
+
+/* ---------- Azure settings ---------- */
+$("azKey").value = az?.key || ""; $("azRegion").value = az?.region || "";
+$("azSave").onclick = () => {
+  const key = $("azKey").value.trim(), region = ($("azRegion").value.trim() || "westeurope").toLowerCase();
+  if (!key){ $("azStatus").textContent = L().azNeed; return; }
+  az = { key, region }; try{ localStorage.setItem(AZ, JSON.stringify(az)); }catch(e){}
+  $("azStatus").textContent = L().azSaved; pickEngine();
+};
+$("azClear").onclick = () => {
+  az = null; try{ localStorage.removeItem(AZ); }catch(e){}
+  $("azKey").value = ""; $("azRegion").value = ""; $("azStatus").textContent = L().azCleared; pickEngine();
+};
+
+/* ---------- home ---------- */
+function renderHome(){
+  stopAll();
+  const list = $("storyList"); list.textContent = "";
+  STORIES.forEach(s => {
+    const done = data.sessions.filter(x => x.story === s.id).length;
+    const b = document.createElement("button"); b.className = "story-btn";
+    b.innerHTML = (COVERS[s.id] || "") + `<span class="sb"><span class="t" dir="ltr" lang="nl"></span><span class="meta"><span class="level"></span><span class="stars"></span></span></span>`;
+    b.querySelector(".t").textContent = s.title;
+    b.querySelector(".level").textContent = s.level;
+    b.querySelector(".stars").innerHTML = [0,1,2].map(i => `<span class="${i < Math.min(done,3) ? "on" : ""}">★</span>`).join("");
+    b.onclick = () => startStory(s);
+    list.appendChild(b);
+  });
+  show("home");
+}
+
+/* ---------- reading ---------- */
+let story, words, sentences, idx, sIdx, states, scores, t0, helped, tries, stuckTimer, busy=false, active=false;
+function startStory(s){
+  story = s; idx = 0; sIdx = 0; tries = 0; helped = new Set(); cheered = new Set(); t0 = Date.now(); active = false;
+  $("readTitle").textContent = s.title; $("readLevel").textContent = s.level;
+  const box = $("storyText"); box.textContent = "";
+  sentences = s.text.match(/[^.!?]+[.!?]+/g).map(x => x.trim());
+  words = [];
+  sentences.forEach((sent, si) => sent.split(/\s+/).forEach(raw => {
+    const i = words.length, el = document.createElement("span");
+    el.className = "w"; el.textContent = raw;
+    el.onclick = () => { say(bare(raw), "nl-NL"); helped.add(norm(raw)); if (engine === "parent" && i === idx){ states[i] = "helped"; paint(); } };
+    box.appendChild(el); box.appendChild(document.createTextNode(" "));
+    words.push({ raw, n: norm(raw), s: si, el });
+  }));
+  states = words.map(() => ""); scores = words.map(() => null);
+  setMic(false); $("micBtn").hidden = false; $("heard").hidden = true; renderDiag();
+  $("againBtn").hidden = true; $("nextBtn").hidden = true;
+  status(L().st[engine]);
+  paint(); show("read");
+}
+function paint(){
+  words.forEach((w,i) => {
+    let c = "w";
+    if (states[i]) c += " " + states[i];
+    if (engine !== "parent"){ if (w.s === sIdx && (!states[i] || states[i] === "bad")) c += " sent"; }
+    else if (i === idx) c += " cur";
+    w.el.className = c;
+  });
+  const cur = engine !== "parent" ? words.find(w => w.s === sIdx) : words[idx];
+  if (cur && cur.el.scrollIntoView) cur.el.scrollIntoView({ block:"nearest", behavior:"smooth" });
+  const pf = $("progFill"); if (pf) pf.style.width = (words.length ? Math.round(states.filter(Boolean).length / words.length * 100) : 0) + "%";
+}
+
+/* Azure: one sentence at a time, scored per word, then on to the next sentence by itself */
+function azureListen(){
+  if (busy) return;
+  if (!window.SpeechSDK){ status(L().loading); loadSdk().catch(() => {}); return; }
+  busy = true; active = true; setMic(true);
+  $("againBtn").hidden = true; $("nextBtn").hidden = true;
+  const ref = sentences[sIdx];
+  for (let i = 0; i < words.length; i++) if (words[i].s === sIdx){ states[i] = ""; scores[i] = null; }
+  paint();
+  status(L().listenSent, true);
+  let reco;
+  try{
+    const S = window.SpeechSDK;
+    const cfg = S.SpeechConfig.fromSubscription(az.key, az.region);
+    cfg.speechRecognitionLanguage = "nl-NL";
+    const audio = S.AudioConfig.fromDefaultMicrophoneInput();
+    const pa = new S.PronunciationAssessmentConfig(ref, S.PronunciationAssessmentGradingSystem.HundredMark, S.PronunciationAssessmentGranularity.Phoneme, true);
+    reco = new S.SpeechRecognizer(cfg, audio);
+    pa.applyTo(reco);
+    reco.recognizeOnceAsync(res => { try{ reco.close(); }catch(e){} busy = false; if (active) handleAzure(res); },
+      err => { try{ reco.close(); }catch(e){} busy = false; azureError(String(err)); });
+  }catch(e){ busy = false; azureError(String(e)); }
+}
+function azureError(msg){
+  setMic(false);
+  if (/401|1006|auth/i.test(msg)) status(L().keyBad);
+  else if (/microphone|permission|NotAllowed/i.test(msg)) status(L().noMic);
+  else status(L().netErr);
+}
+function handleAzure(res){
+  const S = window.SpeechSDK;
+  if (res.reason !== S.ResultReason.RecognizedSpeech){
+    setMic(false);
+    if (res.reason === S.ResultReason.Canceled){ azureError(res.errorDetails || ""); return; }
+    status(L().notHeard); return;
+  }
+  const pr = S.PronunciationAssessmentResult.fromResult(res);
+  scoreSentence(((pr.detailResult && pr.detailResult.Words) || []));
+}
+// Map Azure's per-word results onto the words of the current sentence and decide what happens next
+function scoreSentence(azWords){
+  const got = azWords.filter(w => w.PronunciationAssessment?.ErrorType !== "Insertion");
+  const mine = words.map((w,i) => i).filter(i => words[i].s === sIdx);
+  let g = 0;
+  mine.forEach(i => {
+    let hit = null;
+    for (let k = g; k < Math.min(g + 3, got.length); k++){ if (close(norm(got[k].Word), words[i].n)){ hit = k; break; } }
+    if (hit === null && got[g] && mine.length === got.length) hit = g;
+    if (hit === null){ states[i] = "missed"; scores[i] = 0; return; }
+    const a = got[hit].PronunciationAssessment || {}; g = hit + 1;
+    if (a.ErrorType === "Omission"){ states[i] = "missed"; scores[i] = 0; return; }
+    const sc = Math.round(a.AccuracyScore ?? 0); scores[i] = sc;
+    states[i] = sc >= 80 ? "ok" : sc >= 60 ? "almost" : "bad";
+  });
+  paint();
+  const weak = mine.filter(i => states[i] === "bad" || states[i] === "missed");
+  if (weak.length && tries < 1){
+    tries++; setMic(false); status(L().almost);
+    $("againBtn").hidden = false; $("nextBtn").hidden = false;
+    return;
+  }
+  status(weak.length ? L().moveOn : L().great); if (!weak.length) cheer();
+  setTimeout(nextSentence, 1100);
+}
+function nextSentence(){
+  if (!active) return;
+  tries = 0; sIdx++;
+  if (sIdx >= sentences.length){ finishReading(); return; }
+  paint(); azureListen();
+}
+$("againBtn").onclick = azureListen;
+$("nextBtn").onclick = () => { $("againBtn").hidden = true; $("nextBtn").hidden = true; nextSentence(); };
+
+/* Chrome: continuous listening, word heard or not */
+let rec, listening = false, baseIdx = 0;
+function armStuck(){
+  clearTimeout(stuckTimer); words.forEach(w => w.el.classList.remove("stuck"));
+  stuckTimer = setTimeout(() => { if (words[idx] && listening){ words[idx].el.classList.add("stuck"); status(L().stuck); } }, 7000);
+}
+function align(tokens){
+  for (let i = baseIdx; i < words.length; i++) states[i] = "";
+  let j = baseIdx;
+  for (const t of tokens){
+    if (j >= words.length) break;
+    for (let k = j; k <= Math.min(j + 2, words.length - 1); k++){
+      if (close(t, words[k].n)){ for (let m = j; m < k; m++) states[m] = "missed"; states[k] = "ok"; j = k + 1; break; }
+    }
+  }
+  const moved = j !== idx, from = idx; idx = j; paint(); if (moved) armStuck(); if (j > from) celebrateSentences(from, j);
+  if (idx >= words.length){ stopChrome(); finishReading(); }
+}
+/* check line: shows what the microphone and speech recognition are doing, so a screenshot tells us what's wrong */
+const VERSION = "v6";
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const diag = { mic:"–", start:0, audio:"–", speech:"–", results:0, error:"–" };
+function diagSet(k, v){ diag[k] = v; renderDiag(); }
+function renderDiag(){
+  const el = $("diag"); if (!el) return;
+  el.textContent = `${VERSION} · ${SR ? "SR ✓" : "SR ✗"} · mic ${diag.mic} · start ${diag.start} · sound ${diag.audio} · voice ${diag.speech} · results ${diag.results} · error ${diag.error}`;
+}
+function lvl(v){ $("micBtn").style.setProperty("--lvl", v); }
+function showHeard(t){ const w = t.trim().split(/\s+/).slice(-10).join(" "); const h = $("heard"); h.hidden = !w; h.textContent = L().heard + " " + w; }
+function startChrome(){
+  try{
+    // phones are more reliable with one phrase per session; we start a new session after every pause
+    rec = new SR(); rec.lang = "nl-NL"; rec.continuous = !IS_MOBILE; rec.interimResults = true; rec.maxAlternatives = 1;
+    baseIdx = idx; active = true;
+    rec.onstart = () => diagSet("start", diag.start + 1);
+    rec.onaudiostart = () => { diagSet("audio", "✓"); status(L().listenChrome, true); };
+    rec.onspeechstart = () => { diagSet("speech", "✓"); lvl(0.7); };
+    rec.onspeechend = () => lvl(0);
+    rec.onresult = e => {
+      let t = ""; for (let i = 0; i < e.results.length; i++) t += " " + e.results[i][0].transcript;
+      diagSet("results", diag.results + 1); showHeard(t); lvl((0.5 + Math.random() * 0.5).toFixed(2));
+      align(t.split(/\s+/).map(norm).filter(Boolean));
+    };
+    rec.onerror = e => {
+      const er = e.error; diagSet("error", er);
+      if (er === "no-speech"){ status(L().noSpeech); return; }
+      if (er === "aborted") return;
+      if (er === "network"){ status(L().srNetwork); return; }
+      if (er === "language-not-supported"){ listening = false; setMic(false); status(L().srLang); return; }
+      if (["not-allowed","service-not-allowed","audio-capture"].includes(er)){
+        listening = false; setMic(false); $("parentControls").hidden = false; status(L().micDenied + " (" + er + ")"); return;
+      }
+      status(L().srOther + " (" + er + ")");
+    };
+    // phones end a listening session after each pause; start a new one from the current word
+    rec.onend = () => { lvl(0); if (listening && idx < words.length) setTimeout(() => { if (!listening) return; try{ baseIdx = idx; rec.start(); }catch(e){} }, 250); };
+    listening = true; setMic(true); rec.start();
+    status(L().listenChrome, true); armStuck();
+  }catch(e){ diagSet("error", "start: " + (e && e.message || e)); listening = false; setMic(false); status(L().noSR); }
+}
+function stopChrome(){ listening = false; try{ rec && rec.stop(); }catch(e){} setMic(false); }
+
+/* microphone button: asks the browser for the microphone, then starts listening */
+let micStream = null, micCtx = null, micRaf = 0, micOn = false;
+function setMic(on){
+  micOn = on;
+  const b = $("micBtn"); b.setAttribute("aria-pressed", on); $("micLabel").textContent = on ? L().micOff : L().micOn;
+  if (on && !micStream && useMeter()) openMeter(); if (!on) closeMeter();
+}
+// the sound meter needs its own microphone stream; phones give the microphone to one user only, so only use it with Azure on a computer
+function useMeter(){ return engine === "azure" && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
+async function openMeter(){
+  try{
+    const s = await navigator.mediaDevices.getUserMedia({ audio:true });
+    if (!micOn){ s.getTracks().forEach(t => t.stop()); return; }
+    micStream = s; micCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const an = micCtx.createAnalyser(); an.fftSize = 512; micCtx.createMediaStreamSource(s).connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    const loop = () => {
+      an.getByteTimeDomainData(buf); let sum = 0; for (const v of buf){ const x = (v - 128) / 128; sum += x * x; }
+      $("micBtn").style.setProperty("--lvl", Math.min(1, Math.sqrt(sum / buf.length) * 5).toFixed(2));
+      micRaf = requestAnimationFrame(loop);
+    };
+    loop();
+  }catch(e){}
+}
+function closeMeter(){
+  cancelAnimationFrame(micRaf);
+  try{ micStream && micStream.getTracks().forEach(t => t.stop()); }catch(e){}
+  try{ micCtx && micCtx.close(); }catch(e){}
+  micStream = null; micCtx = null; $("micBtn").style.setProperty("--lvl", 0);
+}
+$("micBtn").onclick = async () => {
+  if (micOn){ active = false; stopSentence(); if (listening) stopChrome(); setMic(false); status(L().stopped); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ status(L().micBlocked); return; }
+  try{ const s = await navigator.mediaDevices.getUserMedia({ audio:true }); s.getTracks().forEach(t => t.stop()); }
+  catch(e){ diagSet("mic", "✗ " + (e && e.name || "blocked")); status(L().micBlocked); return; }
+  diagSet("mic", "✓");
+  await new Promise(r => setTimeout(r, 400));
+  if (engine === "azure") azureListen();
+  else if (SR){ if (engine === "parent"){ engine = "chrome"; $("parentControls").hidden = true; $("modeTag").textContent = L().tag.chrome; } active = true; sTry = 0; listenSentence(); }
+  else status(L().noSR);
+};
+function stopAll(){ active = false; clearTimeout(stuckTimer); stopSentence(); if (listening) stopChrome(); setMic(false); resetRec(); }
+
+/* reading with the free speech recognition: one sentence at a time.
+   listen → judge → say "good" and go on, or say "try again" and listen once more; after two tries move on so nobody gets stuck */
+let sRec = null, sTry = 0;
+const sentIdxs = si => words.map((w, i) => i).filter(i => words[i].s === si);
+function judgeTokens(mine, tokens){
+  const st = mine.map(() => "bad"); let j = 0;
+  for (const t of tokens){
+    if (j >= mine.length) break;
+    for (let k = j; k <= Math.min(j + 2, mine.length - 1); k++){ if (close(t, words[mine[k]].n)){ st[k] = "ok"; j = k + 1; break; } }
+  }
+  return st;
+}
+// speak, then continue; the timer is a safety net for phones without a Dutch voice
+function sayThen(text, next){
+  let done = false; const go = () => { if (done) return; done = true; next(); };
+  say(text, "nl-NL", go); setTimeout(go, 1200 + text.length * 90);
+}
+function stopSentence(){
+  if (sRec){ const r = sRec; sRec = null; try{ r.abort ? r.abort() : r.stop(); }catch(e){} }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  lvl(0);
+}
+function listenSentence(){
+  if (!active || sRec || sIdx >= sentences.length) return;
+  const mine = sentIdxs(sIdx);
+  mine.forEach(i => { if (states[i] !== "bad") states[i] = ""; }); paint();
+  let r; try{ r = new SR(); }catch(e){ setMic(false); status(L().noSR); return; }
+  let text = "", err = "";
+  sRec = r; r.lang = "nl-NL"; r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
+  r.onaudiostart = () => status(L().listenSent, true);
+  r.onspeechstart = () => lvl(0.7);
+  r.onspeechend = () => lvl(0);
+  r.onresult = e => {
+    text = ""; for (let k = 0; k < e.results.length; k++) text += " " + e.results[k][0].transcript;
+    showHeard(text); lvl((0.5 + Math.random() * 0.5).toFixed(2));
+    const st = judgeTokens(mine, text.split(/\s+/).map(norm).filter(Boolean));
+    mine.forEach((i, k) => { if (st[k] === "ok") states[i] = "ok"; }); paint();
+  };
+  r.onerror = e => { err = e.error; };
+  r.onend = () => { if (sRec !== r) return; sRec = null; lvl(0); if (active) finishSentence(text, err); };
+  setMic(true); status(L().listenSent, true);
+  try{ r.start(); }catch(e){ sRec = null; setMic(false); status(L().noSR); }
+}
+function finishSentence(text, err){
+  const mine = sentIdxs(sIdx), toks = text.split(/\s+/).map(norm).filter(Boolean);
+  if (["not-allowed","service-not-allowed","audio-capture"].includes(err)){ active = false; setMic(false); $("parentControls").hidden = false; status(L().micDenied); return; }
+  if (err === "network"){ active = false; setMic(false); status(L().srNetwork); return; }
+  if (!toks.length){ active = false; setMic(false); status(L().notHeard); return; }
+  const st = judgeTokens(mine, toks), okN = st.filter(x => x === "ok").length;
+  const good = okN === mine.length || (mine.length >= 6 && mine.length - okN <= 1);
+  if (good){
+    mine.forEach((i, k) => states[i] = st[k] === "ok" ? (helped.has(words[i].n) ? "helped" : "ok") : "missed");
+    paint(); cheered.add(sIdx); cheer(); status(L().great); sTry = 0;
+    sayThen(pick(NL_PRAISE), () => setTimeout(nextSentence2, 250));
+  } else if (sTry < 1){
+    sTry++;
+    mine.forEach((i, k) => states[i] = st[k] === "ok" ? "ok" : "bad"); paint();
+    cheer(L().tryBubble, "try"); status(L().tryAgainSay);
+    const unclear = mine.filter((i, k) => st[k] !== "ok").map(i => bare(words[i].raw));
+    sayThen("Probeer het nog eens. " + unclear.join(", "), () => setTimeout(listenSentence, 400));
+  } else {
+    mine.forEach((i, k) => states[i] = st[k] === "ok" ? "ok" : "missed"); paint();
+    sTry = 0; status(L().moveOn);
+    sayThen("Goed geprobeerd!", () => setTimeout(nextSentence2, 250));
+  }
+}
+function nextSentence2(){
+  if (!active) return;
+  sIdx++; sTry = 0; $("heard").hidden = true;
+  if (sIdx >= sentences.length){ setMic(false); finishReading(); return; }
+  paint(); listenSentence();
+}
+$("backBtn").onclick = renderHome;
+
+/* parent fallback */
+function advance(state){ if (idx >= words.length) return; states[idx] = helped.has(words[idx].n) && state === "ok" ? "helped" : state; idx++; paint(); celebrateSentences(idx - 1, idx); if (idx >= words.length) finishReading(); }
+$("okBtn").onclick = () => advance("ok");
+$("skipBtn").onclick = () => advance("missed");
+$("helpBtn").onclick = () => { if (words[idx]){ say(bare(words[idx].raw), "nl-NL"); helped.add(words[idx].n); states[idx] = "helped"; paint(); } };
+
+/* ---------- home-language part ---------- */
+let quizOk = null;
+function finishReading(){
+  active = false; clearTimeout(stuckTimer); setMic(false);
+  $("micBtn").hidden = true; $("againBtn").hidden = true; $("nextBtn").hidden = true;
+  status(L().finished);
+  setTimeout(showHomePart, 1200);
+}
+function showHomePart(){
+  quizOk = null;
+  const tr = story.tr[lang];
+  $("homeText").textContent = tr.text;
+  $("qText").textContent = tr.q;
+  const box = $("qOpts"); box.textContent = "";
+  tr.opts.map((o,i) => i).sort(() => Math.random() - .5).forEach(i => {
+    const b = document.createElement("button"); b.textContent = tr.opts[i];
+    b.onclick = () => {
+      if (i === story.ok){ b.classList.add("right"); if (quizOk === null) quizOk = true; $("finishBtn").disabled = false; }
+      else { b.classList.add("wrong"); if (quizOk === null) quizOk = false; }
+    };
+    box.appendChild(b);
+  });
+  const v = $("vocab"); v.textContent = "";
+  story.words.forEach((nl, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="nl" dir="ltr" lang="nl"></span><span class="tr"></span>` + ICON("vol");
+    b.children[0].textContent = nl; b.children[1].textContent = tr.words[k];
+    b.onclick = () => say(nl, "nl-NL");
+    v.appendChild(b);
+  });
+  $("finishBtn").disabled = true;
+  show("homepart");
+}
+$("homeListen").onclick = () => say(story.tr[lang].text, L().voice);
+/* ---------- encouragement: praise bubble, a short chime, confetti ---------- */
+const NL_PRAISE = ["Goed zo!", "Super!", "Knap gedaan!", "Geweldig!", "Prima!"];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+let cheered = new Set(), audioCtx = null, cheerTimer = 0;
+const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+function chime(big){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const notes = big ? [659, 784, 988, 1319] : [784, 1047];
+    notes.forEach((f, k) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + k * 0.11;
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      o.connect(g).connect(audioCtx.destination); o.start(t); o.stop(t + 0.4);
+    });
+  }catch(e){}
+}
+function cheer(text, kind){
+  const el = $("cheer"); $("cheerText").textContent = text || pick(L().cheers);
+  el.classList.toggle("try", kind === "try");
+  el.hidden = false; el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+  clearTimeout(cheerTimer); cheerTimer = setTimeout(() => { el.hidden = true; }, calm() ? 1200 : 1650);
+  if (kind !== "try") chime(false);
+}
+// called when the reading point moves forward: praise each sentence that was finished with at most one unclear word
+function celebrateSentences(from, to){
+  for (let k = from; k < to; k++){
+    const w = words[k]; if (!w) continue;
+    const endOfSentence = !words[k + 1] || words[k + 1].s !== w.s;
+    if (!endOfSentence || cheered.has(w.s)) continue;
+    cheered.add(w.s);
+    const mine = words.map((x, i) => i).filter(i => words[i].s === w.s);
+    const good = mine.filter(i => states[i] === "ok" || states[i] === "helped").length;
+    if (mine.length - good <= 1) cheer();
+  }
+}
+function confetti(){
+  if (calm()) return;
+  const c = $("confetti"), ctx = c.getContext("2d"), dpr = window.devicePixelRatio || 1;
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.scale(dpr, dpr);
+  const css = getComputedStyle(document.documentElement);
+  const cols = ["--orange","--teal","--sun","--rose"].map(v => css.getPropertyValue(v).trim() || "#FF7A1A");
+  const bits = Array.from({ length: 110 }, () => ({
+    x: innerWidth / 2 + (Math.random() - .5) * 80, y: innerHeight * .3,
+    vx: (Math.random() - .5) * 9, vy: -Math.random() * 9 - 3, r: Math.random() * 6.28, vr: (Math.random() - .5) * .3,
+    w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, c: cols[Math.floor(Math.random() * cols.length)] }));
+  const t0c = performance.now();
+  const frame = now => {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    bits.forEach(b => { b.vy += .25; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore(); });
+    if (now - t0c < 2200) requestAnimationFrame(frame); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  };
+  requestAnimationFrame(frame);
+}
+
+/* ---------- end screen: points, stars and the recorder ---------- */
+// 90 points for reading (Azure pronunciation score, or the share of words read correctly) + 10 for the question
+function computePoints(ok, avg){
+  const reading = avg !== null ? avg : (words.length ? ok / words.length * 100 : 0);
+  return Math.max(0, Math.min(100, Math.round(reading * 0.9 + (quizOk ? 10 : 0))));
+}
+$("finishBtn").onclick = () => {
+  const ok = states.filter(s => s === "ok").length;
+  const weak = words.filter((w,i) => ["missed","bad","almost","helped"].includes(states[i])).map(w => w.n);
+  weak.forEach(n => data.practice[n] = (data.practice[n] || 0) + 1);
+  const sc = scores.filter(x => x !== null);
+  const avg = sc.length ? Math.round(sc.reduce((a,b) => a + b, 0) / sc.length) : null;
+  const points = computePoints(ok, avg);
+  data.sessions.push({ story: story.id, date: new Date().toISOString(), secs: Math.round((Date.now() - t0) / 1000), total: words.length, ok, help: weak.length, quizOk: !!quizOk, score: avg, points, lang });
+  save(data);
+  showDone(ok, avg, points);
+};
+const STAR = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6l12.9 26.2 28.9 4.2-20.9 20.4 4.9 28.8L50 72 24.2 85.6l4.9-28.8L8.2 36.4l28.9-4.2z" stroke-width="3" stroke-linejoin="round"/></svg>';
+function showDone(ok, avg, points){
+  const t = L(), n = points >= 90 ? 3 : points >= 70 ? 2 : 1;
+  $("starRow").innerHTML = [0,1,2].map(i => `<span class="${i < n ? "on" : "off"}">${STAR}</span>`).join("");
+  $("starRow").setAttribute("aria-label", n + " / 3");
+  $("pointsDetail").textContent = t.pdRead(ok, words.length) + " · " + (quizOk ? t.pdQuizOk : t.pdQuizNo) + (avg !== null ? " · " + t.hPron + " " + avg : "");
+  resetRec(); renderRecText(); updateRecButtons();
+  show("done");
+  // the big moment: confetti and a spoken "well done" for a good read, a kind word otherwise
+  if (points >= 70){ confetti(); chime(true); }
+  setTimeout(() => say(points >= 70 ? "Goed gedaan!" : "Goed geprobeerd!", "nl-NL"), 500);
+  // count the points up once, unless the viewer prefers less motion
+  const el = $("pointsNum");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent = points; return; }
+  const t0c = performance.now();
+  const step = now => { const k = Math.min(1, (now - t0c) / 900); el.textContent = Math.round(points * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+/* recorder: the child records one sentence at a time and compares it with the correct reading; nothing is saved */
+let mediaRec = null, recChunks = [], recStream = null, recTimer = 0, player = null, recIdx = 0, recUrls = [], recCtx = null, recRaf = 0;
+const recSentences = () => story ? story.text.match(/[^.!?]+[.!?]+/g).map(x => x.trim()) : [];
+const isRecording = () => !!(mediaRec && mediaRec.state === "recording");
+function renderRecText(){
+  const box = $("recText"); box.textContent = "";
+  const list = recSentences();
+  list.forEach((txt, i) => {
+    const sp = document.createElement("span");
+    if (i === recIdx){
+      txt.split(/\s+/).forEach((w, k) => {
+        const c = document.createElement("span"); c.className = "cw " + ((chkStates[i] || [])[k] || ""); c.textContent = w;
+        c.onclick = ev => { ev.stopPropagation(); say(bare(w), "nl-NL"); };
+        sp.appendChild(c); if (k < txt.split(/\s+/).length - 1) sp.appendChild(document.createTextNode(" "));
+      });
+    } else sp.textContent = txt;
+    sp.className = "rs" + (i === recIdx ? " cur" : "") + (recUrls[i] ? " done" : "") + (chkResult[i] === "good" ? " good" : "");
+    sp.onclick = () => { if (isRecording() || chkRec || i === recIdx) return; recIdx = i; $("recStatus").textContent = ""; $("chkVerdict").hidden = true; renderRecText(); updateRecButtons(); };
+    box.appendChild(sp); box.appendChild(document.createTextNode(" "));
+  });
+  $("recPos").textContent = list.length ? L().recSent(recIdx + 1, list.length) : "";
+}
+function updateRecButtons(){
+  const has = !!recUrls[recIdx], rec = isRecording() || !!chkRec, n = recSentences().length;
+  $("playBtn").disabled = !has || rec; $("bothBtn").disabled = !has || rec; $("modelBtn").disabled = rec;
+  $("prevBtn").disabled = rec || recIdx <= 0; $("nextSentBtn").disabled = rec || recIdx >= n - 1;
+  $("recBtn").disabled = !!chkRec; $("chkBtn").disabled = isRecording();
+}
+function setRecBtn(on){ $("recBtn").setAttribute("aria-pressed", on); $("recLabel").textContent = on ? L().recStop : L().recStart; if (!on) $("recBtn").style.setProperty("--lvl", 0); }
+function stopPlayback(){ if (player){ player.pause(); player = null; } try{ speechSynthesis.cancel(); }catch(e){} }
+function stopRec(discard){
+  cancelAnimationFrame(recRaf); clearTimeout(recTimer);
+  if (mediaRec && mediaRec.state !== "inactive"){ mediaRec._discard = !!discard; mediaRec.stop(); }
+  else if (recStream){ try{ recStream.getTracks().forEach(t => t.stop()); }catch(e){} recStream = null; }
+  setRecBtn(false);
+}
+function resetRec(){
+  stopRec(true); stopPlayback();
+  recUrls.forEach(u => u && URL.revokeObjectURL(u)); recUrls = []; recIdx = 0;
+  if (chkRec){ try{ chkRec.abort ? chkRec.abort() : chkRec.stop(); }catch(e){} chkRec = null; }
+  chkStates = {}; chkResult = {}; $("chkVerdict").hidden = true; setChk(false);
+  $("recStatus").textContent = ""; setRecBtn(false);
+}
+async function startRec(){
+  if (!window.MediaRecorder || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $("recStatus").textContent = L().micBlocked; return; }
+  try{ recStream = await navigator.mediaDevices.getUserMedia({ audio:true }); }
+  catch(e){ $("recStatus").textContent = L().micBlocked; return; }
+  stopPlayback(); recChunks = [];
+  const at = recIdx, stream = recStream, r = new MediaRecorder(stream); mediaRec = r;
+  r.ondataavailable = e => { if (e.data && e.data.size) recChunks.push(e.data); };
+  r.onstop = () => {
+    try{ stream.getTracks().forEach(t => t.stop()); }catch(e){}
+    if (recStream === stream) recStream = null;
+    try{ recCtx && recCtx.close(); }catch(e){} recCtx = null;
+    setRecBtn(false);
+    if (r._discard){ updateRecButtons(); return; }
+    if (recUrls[at]) URL.revokeObjectURL(recUrls[at]);
+    recUrls[at] = URL.createObjectURL(new Blob(recChunks, { type: r.mimeType || "audio/webm" }));
+    $("recStatus").textContent = L().recDone; renderRecText(); updateRecButtons();
+  };
+  r.start(); setRecBtn(true); $("recStatus").textContent = L().recRecording; updateRecButtons();
+  // the ring follows the voice, and recording stops by itself 1.5 s after the child goes quiet
+  try{
+    recCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const an = recCtx.createAnalyser(); an.fftSize = 512; recCtx.createMediaStreamSource(stream).connect(an);
+    const buf = new Uint8Array(an.fftSize); let spoke = false, quietSince = 0;
+    const tick = now => {
+      an.getByteTimeDomainData(buf); let sum = 0; for (const v of buf){ const x = (v - 128) / 128; sum += x * x; }
+      const rms = Math.sqrt(sum / buf.length);
+      $("recBtn").style.setProperty("--lvl", Math.min(1, rms * 5).toFixed(2));
+      if (rms > 0.04){ spoke = true; quietSince = 0; }
+      else if (spoke){ quietSince = quietSince || now; if (now - quietSince > 1500){ stopRec(); return; } }
+      recRaf = requestAnimationFrame(tick);
+    };
+    recRaf = requestAnimationFrame(tick);
+  }catch(e){}
+  recTimer = setTimeout(() => stopRec(), 30000);
+}
+function playMine(){ const u = recUrls[recIdx]; if (!u) return; stopPlayback(); player = new Audio(u); player.play().catch(() => {}); }
+function playModel(onend){ stopPlayback(); say(recSentences()[recIdx], "nl-NL", onend); }
+function goSentence(d){ recIdx = Math.max(0, Math.min(recSentences().length - 1, recIdx + d)); stopPlayback(); $("recStatus").textContent = ""; $("chkVerdict").hidden = true; renderRecText(); updateRecButtons(); }
+$("recBtn").onclick = () => isRecording() ? stopRec() : startRec();
+
+/* "Check me": listens to one sentence and says whether it was good, almost, or not yet */
+let chkRec = null, chkStates = {}, chkResult = {};
+const sentWords = i => recSentences()[i].split(/\s+/);
+function setChk(on){ $("chkBtn").setAttribute("aria-pressed", on); $("chkLabel").textContent = on ? L().stop : L().chkBtn; }
+function judge(i, tokens){
+  const ws = sentWords(i).map(norm), st = ws.map(() => "bad"); let j = 0;
+  for (const t of tokens){
+    if (j >= ws.length) break;
+    for (let k = j; k <= Math.min(j + 2, ws.length - 1); k++){ if (close(t, ws[k])){ st[k] = "ok"; j = k + 1; break; } }
+  }
+  return st;
+}
+function verdict(i, st, heardAny){
+  chkStates[i] = st;
+  const okN = st.filter(x => x === "ok").length, n = st.length;
+  const kind = !heardAny ? "none" : okN === n ? "good" : okN / n >= 0.6 ? "almost" : "bad";
+  chkResult[i] = kind === "good" ? "good" : "try";
+  const v = $("chkVerdict"); v.hidden = false; v.className = "verdict " + kind;
+  v.textContent = { good:L().chkGood, almost:L().chkAlmost, bad:L().chkBad, none:L().chkNone }[kind];
+  renderRecText(); updateRecButtons();
+  if (kind === "good"){ cheer(); say(pick(NL_PRAISE), "nl-NL"); }
+  else if (kind === "almost") say("Bijna! " + sentWords(i).filter((w, k) => st[k] !== "ok").map(bare).join(", "), "nl-NL");
+  else if (kind === "bad") say("Probeer het nog eens. " + recSentences()[i], "nl-NL");
+}
+function azureCheck(i){
+  const S = window.SpeechSDK; let reco;
+  chkRec = { stop(){} }; setChk(true); updateRecButtons(); $("recStatus").textContent = L().chkListening;
+  const fail = () => { try{ reco && reco.close(); }catch(e){} chkRec = null; setChk(false); updateRecButtons(); $("recStatus").textContent = L().netErr; };
+  try{
+    const cfg = S.SpeechConfig.fromSubscription(az.key, az.region); cfg.speechRecognitionLanguage = "nl-NL";
+    const pa = new S.PronunciationAssessmentConfig(recSentences()[i], S.PronunciationAssessmentGradingSystem.HundredMark, S.PronunciationAssessmentGranularity.Phoneme, true);
+    reco = new S.SpeechRecognizer(cfg, S.AudioConfig.fromDefaultMicrophoneInput()); pa.applyTo(reco);
+    reco.recognizeOnceAsync(res => {
+      try{ reco.close(); }catch(e){} chkRec = null; setChk(false); $("recStatus").textContent = "";
+      if (res.reason !== S.ResultReason.RecognizedSpeech){ verdict(i, sentWords(i).map(() => "bad"), false); return; }
+      const got = ((S.PronunciationAssessmentResult.fromResult(res).detailResult || {}).Words || []).filter(w => w.PronunciationAssessment?.ErrorType !== "Insertion");
+      let g = 0;
+      const st = sentWords(i).map(norm).map(w => {
+        let hit = null; for (let k = g; k < Math.min(g + 3, got.length); k++){ if (close(norm(got[k].Word), w)){ hit = k; break; } }
+        if (hit === null) return "bad"; g = hit + 1;
+        const a = got[hit].PronunciationAssessment || {};
+        return a.ErrorType === "Omission" || (a.AccuracyScore ?? 0) < 70 ? "bad" : "ok";
+      });
+      verdict(i, st, true);
+    }, fail);
+  }catch(e){ fail(); }
+}
+function startCheck(){
+  if (isRecording() || chkRec) return;
+  stopPlayback();
+  const i = recIdx; $("chkVerdict").hidden = true; delete chkStates[i]; renderRecText();
+  if (engine === "azure" && window.SpeechSDK) return azureCheck(i);
+  if (!SR){ $("recStatus").textContent = L().noSR; return; }
+  let text = "", r;
+  try{ r = new SR(); }catch(e){ $("recStatus").textContent = L().noSR; return; }
+  chkRec = r; r.lang = "nl-NL"; r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = e => {
+    text = ""; for (let k = 0; k < e.results.length; k++) text += " " + e.results[k][0].transcript;
+    $("recStatus").textContent = L().heard + " " + text.trim();
+    chkStates[i] = judge(i, text.split(/\s+/).map(norm).filter(Boolean)); renderRecText();
+  };
+  r.onerror = e => {
+    if (["not-allowed","service-not-allowed","audio-capture"].includes(e.error)) $("recStatus").textContent = L().micBlocked;
+    else if (e.error === "network") $("recStatus").textContent = L().srNetwork;
+  };
+  r.onend = () => {
+    if (chkRec !== r) return;
+    chkRec = null; setChk(false);
+    const toks = text.split(/\s+/).map(norm).filter(Boolean);
+    verdict(i, judge(i, toks), toks.length > 0);
+  };
+  setChk(true); updateRecButtons(); $("recStatus").textContent = L().chkListening;
+  try{ r.start(); }catch(e){ chkRec = null; setChk(false); updateRecButtons(); $("recStatus").textContent = L().noSR; }
+}
+$("chkBtn").onclick = () => { if (chkRec){ try{ chkRec.stop(); }catch(e){} return; } startCheck(); };
+$("modelBtn").onclick = () => playModel();
+$("playBtn").onclick = playMine;
+$("bothBtn").onclick = () => playModel(() => setTimeout(playMine, 400));
+$("prevBtn").onclick = () => goSentence(-1);
+$("nextSentBtn").onclick = () => goSentence(1);
+$("homeBtn").onclick = renderHome;
+
+/* ---------- parent report ---------- */
+let resetArmed = false;
+function renderReport(){
+  const t = L(), S = data.sessions;
+  const mins = Math.round(S.reduce((a,s) => a + s.secs, 0) / 60);
+  const total = S.reduce((a,s) => a + s.total, 0), ok = S.reduce((a,s) => a + s.ok, 0);
+  const scored = S.filter(s => s.score !== null && s.score !== undefined);
+  const avg = scored.length ? Math.round(scored.reduce((a,s) => a + s.score, 0) / scored.length) : null;
+  const quiz = S.filter(s => s.quizOk).length;
+  const tiles = [[S.length,t.tiles[0]],[mins,t.tiles[1]]];
+  if (avg !== null) tiles.push([avg, t.tiles[2]]);
+  tiles.push([total ? Math.round(ok/total*100) + "%" : "0%", t.tiles[3]], [quiz + "/" + S.length, t.tiles[4]]);
+  $("stats").textContent = "";
+  tiles.forEach(([b,x]) => { const d = document.createElement("div"); d.className = "stat"; d.innerHTML = "<b></b><span></span>"; d.children[0].textContent = b; d.children[1].textContent = x; $("stats").appendChild(d); });
+  const p = $("practice"); p.textContent = "";
+  const top = Object.entries(data.practice).sort((a,b) => b[1] - a[1]).slice(0,8);
+  if (!top.length){ const s = document.createElement("span"); s.className = "muted"; s.dir = t.dir; s.textContent = t.none; p.appendChild(s); }
+  top.forEach(([w]) => { const b = document.createElement("button"); b.className = "chip"; b.textContent = w; b.onclick = () => say(w, "nl-NL"); p.appendChild(b); });
+  const h = $("history"); h.textContent = "";
+  S.slice(-5).reverse().forEach(s => {
+    const st = STORIES.find(x => x.id === s.story), d = document.createElement("p"); d.className = "muted";
+    const date = new Date(s.date).toLocaleDateString(t.locale, { day:"numeric", month:"short" });
+    d.textContent = `${date} · ${st ? st.title : s.story} · ${s.ok}/${s.total} ${t.hWords}` + (s.score != null ? ` · ${t.hPron} ${s.score}` : "") + (s.points != null ? ` · ★ ${s.points}` : "") + ` · ${Math.max(1, Math.round(s.secs/60))} ${t.hMin}`;
+    h.appendChild(d);
+  });
+  $("resetConfirm").hidden = true; resetArmed = false; $("resetBtn").textContent = t.reset;
+  show("report");
+}
+$("resetBtn").onclick = () => {
+  if (!resetArmed){ resetArmed = true; $("resetBtn").textContent = L().resetAgain; return; }
+  data = { sessions:[], practice:{} }; save(data); renderReport();
+  $("resetConfirm").hidden = false; $("resetConfirm").textContent = L().resetDone;
+};
+$("toReport").onclick = renderReport;
+$("reportBack").onclick = renderHome;
+
+applyLang();
+renderHome();
+</script>
